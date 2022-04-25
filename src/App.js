@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 
+import './Bootstrap.min.css';
 import './App.css';
-import Homepage  from './containers/Homepage';
+import Navbar from './components/Navbar';
+import Home from './containers/Home';
+import Videos from './containers/Videos';
 
 class App extends Component{
   render(){
     return (
       <div className="App">
-          <Route path='/' component={Homepage} />
+		  <Navbar />
+          <Route exact path='/' component={Home} />
+          <Route exact path='/search' component={Home} />
+          <Route exact path='/videos' component={Videos} />
       </div>
     );
   }
