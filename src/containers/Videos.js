@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import axios from '../axios.js';
 
-import testVideo from '../assets/test_video.mp4';
-
 class Videos extends Component {
 	state = {
 		uploading: false,
@@ -32,24 +30,26 @@ class Videos extends Component {
 	componentDidMount = () => {
 		axios.get("/db")
 		.then(result => {
-			console.log(result.data.videos);
-			this.setState({
-				dbVideos: result.data.videos
-			})
+			console.log(result);
+			if(result.data && result.data.videos) {
+				this.setState({
+					dbVideos: result.data.videos
+				});
+			};
 		})
 		.catch(err => console.log(err));
 	}
 
 	render() {
-		const videosJSX = this.state.dbVideos.map(video => {
+		const videosJSX = this.state.dbVideos.map((video, idx) => {
 			return(
-				<div key={video} className="col-3">
+				<div key={idx} className="col-3">
 					<video 
 						width="100%"
 						controls="controls"> 
 						<source 
 							type="video/mp4"
-							src={'src/assets/sasta_db' + video} 
+							src={require("../assets/sasta_db/" + video)}
 						/> 
 					</video>
 				</div>
