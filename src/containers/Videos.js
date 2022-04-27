@@ -1,46 +1,74 @@
 import React, { Component } from 'react';
+import axios from '../axios.js';
+
 import testVideo from '../assets/test_video.mp4';
 
 class Videos extends Component {
 	state = {
-		uploading: false
+		uploading: false,
+		dbVideos: []
 	}
 
-	uploadVideoHandler = () => {
+	uploadVideoHandler = event => {
 		this.setState({
 			uploading: true
 		});
-		setTimeout(() => {
+
+		const formData = new FormData();
+		formData.append('video', event.target.files[0]);
+		const config = {     
+            headers: { 'content-type': 'multipart/form-data' }
+        };
+		axios.post('/add', formData, config)
+		.then(result => {
+			console.log(result);
 			this.setState({
 				uploading: false
 			})
-		}, 2000);
+		})
+		.catch(err => console.log(err));
+	}
+
+	componentDidMount = () => {
+		axios.get("/db")
+		.then(result => {
+			console.log(result.data.videos);
+			this.setState({
+				dbVideos: result.data.videos
+			})
+		})
+		.catch(err => console.log(err));
 	}
 
 	render() {
-		const videosJSX = [];
-		for (let i = 0; i < 18; i++) {
-			videosJSX.push(
-				<div className="col-3">
+		const videosJSX = this.state.dbVideos.map(video => {
+			return(
+				<div key={video} className="col-3">
 					<video 
 						width="100%"
 						controls="controls"> 
-						<source src={testVideo} 
-							type="video/mp4" /> 
+						<source 
+							type="video/mp4"
+							src={'src/assets/sasta_db' + video} 
+						/> 
 					</video>
 				</div>
-			);
-		}
+			)
+		});
 		return (
 			<div className="container p-5">
-				<p class="h1">Video Database</p>
+				<p className="h1">Video Database</p>
 				<div className="mb-3 text-end">
-					<button type="button" class="btn btn-block btn-outline-success" onClick={this.uploadVideoHandler}>Upload Video</button>
+					<input 
+						type="file" 
+						className="btn btn-block btn-outline-success" 
+						accept="video/*"
+						onChange={this.uploadVideoHandler}/>
 				</div>
 				{this.state.uploading ?
-					<div class="progress my-3">
+					<div className="progress my-3">
 					<div 
-					class="progress-bar progress-bar-striped progress-bar-animated w-100" 
+					className="progress-bar progress-bar-striped progress-bar-animated w-100" 
 					role="progressbar" 
 					aria-valuenow="0" 
 					aria-valuemin="0" 

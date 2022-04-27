@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from '../axios.js';
 
 import './Home.css';
 import uploadIcon from '../assets/upload.svg';
@@ -25,6 +26,19 @@ class Homepage extends Component {
     }
 
     querySubmitHandler = () => {
+        const queryImage = this.state.inputImage;
+        
+        const data = new FormData();
+        data.append('image', queryImage);
+
+        const config = {     
+            headers: { 'content-type': 'multipart/form-data' }
+        };
+
+        axios.post("/search", data, config).then(result => {
+            console.log(result);
+        }).catch(err => console.log(err));
+        
         this.setState({
             showResults: true
         });
@@ -35,7 +49,7 @@ class Homepage extends Component {
 		const videosJSX = [];
 		for (let i = 0; i < 18; i++) {
 			videosJSX.push(
-				<div className="col-3">
+				<div key={i} className="col-3">
 					<video 
 						width="100%"
 						controls="controls"> 
